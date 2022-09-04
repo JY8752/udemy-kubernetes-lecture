@@ -18,7 +18,7 @@ spec:
         app: sample-app
     spec:
       containers:
-        - image: ghcr.io/jy8752/udemy-kubernetes-lecture:pr-2
+        - image: ghcr.io/jy8752/udemy-kubernetes-lecture:pr-4
           name: fastapi-sample
           envFrom:
             - configMapRef:
