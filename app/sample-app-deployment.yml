@@ -18,12 +18,12 @@ spec:
         app: sample-app
     spec:
       containers:
-      - image: ghcr.io/nakamasato/github-actions-practice:pr-141
-        name: fastapi-sample
-        envFrom:
-          - configMapRef:
-              name: sample-app
-          - secretRef:
-              name: sample-app
-        resources: {}
+        - image: ghcr.io/jy8752/udemy-kubernetes-lecture:pr-2
+          name: fastapi-sample
+          envFrom:
+            - configMapRef:
+                name: sample-app
+            - secretRef:
+                name: sample-app
+          resources: {}
 status: {}
