@@ -11,6 +11,8 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
     permissions:
       contents: read
       packages: write
@@ -39,3 +41,30 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  update-manifest:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: JY8752/udemy-kubernetes-lecture
+          ref: main
+      - name: Update manifest file
+        env:
+          YAML_PATH: app/sample-app-deployment.yml
+          CONTAINER_NAME: fastapi-sample
+          IMAGE_FULL_NAME: ${{ needs.build-and-push-image.outputs.tags }}
+        run: |
+          yq e -i "(.spec.template.spec.containers[]|select(.name == \"${CONTAINER_NAME}\").image)|=\"${IMAGE_FULL_NAME}\"" ${YAML_PATH}
+          cat ${YAML_PATH}
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v4
+        with:
+          # token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          title: "Update fastapi-sample"
+          base: main
+          draft: true
+          body: |
+            #Changes
+            - Update `fastapi-sample` image

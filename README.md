@@ -64,8 +64,34 @@ kubectl create service clusterip sample-app --tcp=80 --dry-run=client -o yaml > 
 
 ## request
 
-```
+```terminal
 kuebectl port-forward svc/sample-app 8080:80 -n $namespace
 
 curl localhost:8080
+```
+
+## CI/CD
+
+## ArgoCD
+
+```terminal
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+//portforward
+kubectl -n argocd port-forward service/argocd-server 30000:80
+
+//login
+
+//username
+admin
+
+//password
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d 
+
+//app projectをapplyする
+kubectl apply -f argocd/argocd-deploy.yml
+//applicationをapplyする
+kubectl apply -f argocd/argocd-sample-app.yml
+
 ```
